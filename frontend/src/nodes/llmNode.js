@@ -12,7 +12,7 @@ export const LLMNode = ({ id }) => {
 
   return (
     <BaseNode id={id} title="LLM" variant="ai" handles={handles}>
-      <span>This is a LLM.</span>
+      <p className="pipeline-node__description">This is a LLM.</p>
     </BaseNode>
   );
 };

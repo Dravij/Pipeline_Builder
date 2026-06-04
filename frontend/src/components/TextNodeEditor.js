@@ -4,37 +4,12 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useStore } from '../store';
 
-const MIN_WIDTH = 220;
-const MAX_WIDTH = 400;
-const MIN_HEIGHT = 80;
-const HORIZONTAL_PADDING = 24;
-const VERTICAL_CHROME = 58;
-const TEXTAREA_FONT =
-  '13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-
-const labelStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  fontSize: 12,
-  gap: 4,
-  flex: 1,
-  minWidth: 0,
-};
-
-const textareaStyle = {
-  resize: 'none',
-  overflow: 'hidden',
-  border: '1px solid #cbd5e1',
-  borderRadius: 6,
-  padding: '6px 8px',
-  fontSize: 13,
-  fontFamily: 'inherit',
-  lineHeight: 1.4,
-  boxSizing: 'border-box',
-  width: '100%',
-  minHeight: 32,
-  background: '#fff',
-};
+const MIN_WIDTH = 240;
+const MAX_WIDTH = 420;
+const MIN_HEIGHT = 88;
+const HORIZONTAL_PADDING = 28;
+const VERTICAL_CHROME = 72;
+const TEXTAREA_FONT = '12px "SF Mono", "Fira Code", Consolas, monospace';
 
 const measureLongestLineWidth = (text, font) => {
   const canvas = document.createElement('canvas');
@@ -90,13 +65,13 @@ export const TextNodeEditor = ({ nodeId, value, onTextChange, onResize }) => {
   };
 
   return (
-    <label style={labelStyle}>
-      Text
+    <label className="node-field">
+      <span className="node-field__label">Text</span>
       <textarea
         ref={textareaRef}
+        className="node-field__textarea"
         value={text}
         onChange={handleChange}
-        style={textareaStyle}
         rows={1}
         spellCheck={false}
       />

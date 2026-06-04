@@ -1,37 +1,15 @@
 // BaseNode.js
-// Reusable node shell: layout, themed styling, title, and dynamic handles.
+// Reusable node shell: layout, themed styling, title, icons, and dynamic handles.
 
 import { Handle } from 'reactflow';
-import { getNodeStyle, getTitleStyle } from './nodeTheme';
+import { getVariantTheme, getNodeStyle } from './nodeTheme';
+import { getNodeIcon } from './nodeIcons';
 import { useStore } from '../store';
+import { useTheme } from '../context/ThemeContext';
 
 const handleOffset = (index, total) => `${((index + 1) / (total + 1)) * 100}%`;
 
-const headerStyle = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  justifyContent: 'space-between',
-  gap: 8,
-};
-
-const deleteButtonStyle = {
-  flexShrink: 0,
-  width: 20,
-  height: 20,
-  border: 'none',
-  borderRadius: 4,
-  background: 'transparent',
-  color: '#94a3b8',
-  cursor: 'pointer',
-  fontSize: 16,
-  lineHeight: 1,
-  padding: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const renderHandles = (id, handles, variant) => {
+const renderHandles = (id, handles, theme) => {
   const counts = {};
   handles.forEach((h) => {
     counts[h.position] = (counts[h.position] || 0) + 1;
@@ -50,13 +28,8 @@ const renderHandles = (id, handles, variant) => {
         type={h.type}
         position={h.position}
         id={`${id}-${h.id}`}
-        style={{
-          width: 10,
-          height: 10,
-          background: getNodeStyle(variant).borderColor,
-          ...autoStyle,
-          ...h.style,
-        }}
+        className="pipeline-handle"
+        style={{ ...autoStyle, ...h.style }}
       />
     );
   });
@@ -70,9 +43,19 @@ export const BaseNode = ({
   handles = [],
   children,
   style = {},
-  className,
+  className = '',
 }) => {
   const deleteNode = useStore((state) => state.deleteNode);
+  const { mode } = useTheme();
+  const theme = getVariantTheme(variant, mode);
+  const Icon = getNodeIcon(title);
+
+  const cssVars = {
+    '--node-accent': theme.accent,
+    '--node-accent-muted': theme.accentMuted,
+    '--node-accent-glow': theme.glow,
+    '--node-title-color': theme.titleColor,
+  };
 
   const handleDelete = (event) => {
     event.stopPropagation();
@@ -80,39 +63,36 @@ export const BaseNode = ({
   };
 
   return (
-    <div className={className} style={{ ...getNodeStyle(variant), ...style, position: 'relative' }}>
-      {renderHandles(id, handles, variant)}
+    <div
+      className={`pipeline-node ${className}`}
+      style={{ ...getNodeStyle(variant, mode), ...cssVars, ...style }}
+    >
+      {renderHandles(id, handles, theme)}
       {title && (
-        <div style={{ ...getTitleStyle(variant), ...headerStyle }}>
-          <div>
-            <span>{title}</span>
-            {subtitle && (
-              <span style={{ display: 'block', fontWeight: 400, fontSize: 11, opacity: 0.75 }}>
-                {subtitle}
-              </span>
-            )}
+        <div className="pipeline-node__header">
+          <div className="pipeline-node__title-row">
+            <div className="pipeline-node__icon">
+              <Icon />
+            </div>
+            <div>
+              <span className="pipeline-node__title">{title}</span>
+              {subtitle && (
+                <span className="pipeline-node__subtitle">{subtitle}</span>
+              )}
+            </div>
           </div>
           <button
             type="button"
-            className="nodrag nopan"
+            className="pipeline-node__delete nodrag nopan"
             aria-label={`Delete ${title} node`}
             title="Delete node"
-            style={deleteButtonStyle}
             onClick={handleDelete}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#fee2e2';
-              e.currentTarget.style.color = '#dc2626';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = '#94a3b8';
-            }}
           >
             ×
           </button>
         </div>
       )}
-      {children && <div>{children}</div>}
+      {children && <div className="pipeline-node__body">{children}</div>}
     </div>
   );
 };

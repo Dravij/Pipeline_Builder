@@ -4,7 +4,6 @@
 import { Position } from 'reactflow';
 import { BaseNode } from './BaseNode';
 import { NodeField } from './NodeField';
-import { nodeDescriptionStyle } from './nodeTheme';
 
 const POSITION_MAP = {
   left: Position.Left,
@@ -43,7 +42,7 @@ export const defineNode = (config) => {
         style={config.style}
       >
         {config.description && (
-          <p style={nodeDescriptionStyle}>{config.description}</p>
+          <p className="pipeline-node__description">{config.description}</p>
         )}
         {(config.fields || []).map((field) => (
           <NodeField

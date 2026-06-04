@@ -1,17 +1,8 @@
 // NodeField.js
-// Reusable controlled field (text or select) that persists its value to the
-// Zustand store via updateNodeField, removing the duplicated useState pattern.
+// Reusable controlled field (text or select) that persists to the Zustand store.
 
 import { useState } from 'react';
 import { useStore } from '../store';
-
-const labelStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  fontSize: 12,
-  gap: 2,
-  marginBottom: 4,
-};
 
 export const NodeField = ({
   nodeId,
@@ -31,10 +22,14 @@ export const NodeField = ({
   };
 
   return (
-    <label style={labelStyle}>
-      {label}
+    <label className="node-field">
+      <span className="node-field__label">{label}</span>
       {type === 'select' ? (
-        <select value={localValue} onChange={handleChange}>
+        <select
+          className="node-field__select"
+          value={localValue}
+          onChange={handleChange}
+        >
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
@@ -42,7 +37,12 @@ export const NodeField = ({
           ))}
         </select>
       ) : (
-        <input type="text" value={localValue} onChange={handleChange} />
+        <input
+          type="text"
+          className="node-field__input"
+          value={localValue}
+          onChange={handleChange}
+        />
       )}
     </label>
   );
